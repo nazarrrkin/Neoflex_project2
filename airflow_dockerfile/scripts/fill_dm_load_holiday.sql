@@ -1,9 +1,8 @@
-CREATE OR REPLACE PROCEDURE load_holiday_info()
-LANGUAGE plpgsql
-AS $$
-BEGIN
-    INSERT INTO dm.loan_holiday_info
-    SELECT d.deal_rk,
+create or replace procedure load_holiday_info()
+as $$
+begin
+    insert into dm.loan_holiday_info
+    select d.deal_rk,
            lh.effective_from_date,
            lh.effective_to_date,
            d.agreement_rk,
@@ -23,14 +22,14 @@ BEGIN
            lh.loan_holiday_fact_finish_date,
            lh.loan_holiday_finish_flg,
            lh.loan_holiday_last_possible_date
-    FROM rd.deal_info d
-    LEFT JOIN rd.loan_holiday lh
-           ON d.deal_rk = lh.deal_rk
-           AND d.effective_from_date = lh.effective_from_date  --
-    LEFT JOIN rd.product p
-           ON p.product_rk = d.product_rk
-           AND d.effective_from_date = p.effective_from_date ; --
-END;
-$$;
+    from rd.deal_info d
+    left join rd.loan_holiday lh
+           on d.deal_rk = lh.deal_rk
+           and d.effective_from_date = lh.effective_from_date  --
+    left join rd.product p
+           on p.product_rk = d.product_rk
+           and d.effective_from_date = p.effective_from_date ; --
+end;
+$$ language plpgsql;
 
 call load_holiday_info();

@@ -141,5 +141,7 @@ with DAG(
     (
         clear_product >>
         [product_load, deal_info_upload] >>
-        del_product_duplicate
+        del_product_duplicate >>
+        clear_holiday_info >>
+        fill_holiday_info
     )
