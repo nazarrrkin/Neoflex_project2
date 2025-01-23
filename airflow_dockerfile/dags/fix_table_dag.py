@@ -89,10 +89,26 @@ with DAG(
     template_searchpath = '/'
  ) as dag:
 
+    #в таблице rd.product нет данных, которых не было бы в csv, поэтому можем полностью перезаписать ее из файла
+    clear_product = SQLExecuteQueryOperator(
+        task_id = 'clear_product',
+        conn_id = 'postgres_db',
+        sql = """
+            truncate table rd.product;
+        """
+    )
+
     product_load = PythonOperator(
         task_id = 'product_load',
         python_callable = insert_data,
         op_kwargs = {'schema': 'rd', 'table_name' : 'product'}
+    )
+
+    #в таблице rd.deal_info есть данные, которых не было в csv, поэтому дозаписываем оставшиеся из файла
+    deal_info_upload = PythonOperator(
+        task_id = 'deal_info_upload',
+        python_callable = insert_data,
+        op_kwargs = {'schema': 'rd', 'table_name' : 'deal_info'}
     )
 
     del_product_duplicate = SQLExecuteQueryOperator(
@@ -107,6 +123,23 @@ with DAG(
         """
     )
 
+    clear_holiday_info = SQLExecuteQueryOperator(
+        task_id = 'clear_holiday_info',
+        conn_id = 'postgres_db',
+        sql = """
+            truncate table dm.loan_holiday_info;
+        """
+    )
+
+    fill_holiday_info = SQLExecuteQueryOperator(
+        task_id='fill_holiday_info',
+        conn_id='postgres_db',
+        sql='/opt/airflow/scripts/fill_dm_load_holiday.sql',
+        autocommit=True
+    )
+
     (
-        product_load >> del_product_duplicate
+        clear_product >>
+        [product_load, deal_info_upload] >>
+        del_product_duplicate
     )

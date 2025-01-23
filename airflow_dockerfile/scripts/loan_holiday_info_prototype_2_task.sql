@@ -34,7 +34,7 @@ select   d.deal_rk
         ,lh.effective_from_date
         ,lh.effective_to_date
         ,d.deal_num as deal_number --Номер сделки
-	    ,lh.loan_holiday_type_cd  --Ссылка на тип кредитных каникул
+	  ,lh.loan_holiday_type_cd  --Ссылка на тип кредитных каникул
         ,lh.loan_holiday_start_date     --Дата начала кредитных каникул
         ,lh.loan_holiday_finish_date    --Дата окончания кредитных каникул
         ,lh.loan_holiday_fact_finish_date      --Дата окончания кредитных каникул фактическая
