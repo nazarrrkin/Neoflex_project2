@@ -32,9 +32,6 @@ def insert_data(schema, table_name):
         WHERE data_type = 'date' AND table_schema = '{schema}' AND table_name = '{table_name}';
     """)
 
-
-
-
     primary_key_query = f"""
         SELECT kcu.column_name
         FROM information_schema.table_constraints tc
@@ -81,9 +78,9 @@ default_args = {
 }
 
 with DAG(
-    'fix_table_dag',
+    'fix_holiday_info',
     default_args = default_args,
-    description = 'Loading data to rd',
+    description = 'Reloading data to rd',
     catchup = False,
     schedule = '0 0 * * *',
     template_searchpath = '/'
